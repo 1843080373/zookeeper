@@ -1,6 +1,7 @@
 package com.rpc.diyrpc.protocol.netty;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import com.rpc.diyrpc.framework.Invocation;
 import com.rpc.diyrpc.framework.URL;
@@ -16,8 +17,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter   {
 		System.out.println("选择了netty协议");
 		System.out.println("服务端。。。。。。。。。收到" + msg);
 		Invocation invocation = (Invocation) msg;
-		URL url=ZookeeperRegister.random(invocation.getInterfaceName());
-		Class<?> inplClass=Class.forName(ZookeeperRegister.get(invocation.getInterfaceName(), url));
+		Map<String,Object> url=ZookeeperRegister.random(invocation.getInterfaceName());
+		Class<?> inplClass=Class.forName((String) url.get("implName"));
 		Method method = inplClass.getDeclaredMethod(invocation.getMethodName(), invocation.getParamTypes());
 		Object result = method.invoke(inplClass.newInstance(), invocation.getParams());
 		System.out.println("服务端。。。。。。。。。发送" + result);

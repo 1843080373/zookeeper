@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,8 +31,8 @@ public class JettyDispatchServlet extends HttpServlet {
 			InputStream inputStream = req.getInputStream();
 			ObjectInputStream ois = new ObjectInputStream(inputStream);
 			Invocation invocation = (com.rpc.diyrpc.framework.Invocation) ois.readObject();
-			URL url=ZookeeperRegister.random(invocation.getInterfaceName());
-			Class<?> inplClass=Class.forName(ZookeeperRegister.get(invocation.getInterfaceName(), url));
+			Map<String,Object> url=ZookeeperRegister.random(invocation.getInterfaceName());
+			Class<?> inplClass=Class.forName((String) url.get("implName"));
 			System.out.println("选择了jetty协议");
 			Method method=inplClass.getDeclaredMethod(invocation.getMethodName(), invocation.getParamTypes());
 			Object result = method.invoke(inplClass.newInstance(), invocation.getParams());

@@ -1,5 +1,7 @@
 package com.rpc.diyrpc.protocol.netty;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.rpc.diyrpc.framework.Invocation;
 import com.rpc.diyrpc.framework.URL;
 import com.rpc.diyrpc.protocol.tomcat.Protocol;
@@ -32,6 +34,7 @@ public class NettyProtocol implements Protocol {
                     ch.pipeline().addLast(new NettyClientHandler(invocation));
                 }
             });
+            System.out.println(JSONObject.toJSONString(url));
             ChannelFuture channelFuture = bootstrap.connect(url.getHonename(), url.getPort()).sync();
             channelFuture.channel().closeFuture().sync();
         }catch (Exception e){

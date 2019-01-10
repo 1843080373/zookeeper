@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,9 +20,8 @@ public class HttpServerHandler {
 			InputStream inputStream = req.getInputStream();
 			ObjectInputStream ois = new ObjectInputStream(inputStream);
 			Invocation invocation = (com.rpc.diyrpc.framework.Invocation) ois.readObject();
-			//负载均衡
-			URL url=ZookeeperRegister.random(invocation.getInterfaceName());
-			Class<?> inplClass=Class.forName(ZookeeperRegister.get(invocation.getInterfaceName(), url));
+			Map<String,Object> url=ZookeeperRegister.random(invocation.getInterfaceName());
+			Class<?> inplClass=Class.forName((String) url.get("implName"));
 			Method method=inplClass.getDeclaredMethod(invocation.getMethodName(), invocation.getParamTypes());
 			Object result = method.invoke(inplClass.newInstance(), invocation.getParams());
 			ObjectOutputStream oos = new ObjectOutputStream(resp.getOutputStream());

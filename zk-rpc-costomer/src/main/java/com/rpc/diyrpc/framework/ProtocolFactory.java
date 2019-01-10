@@ -10,13 +10,13 @@ public class ProtocolFactory {
 	public static Protocol getProtocol(String type) {
 		Protocol protocol = null;
 		switch (type) {
-		case ProviderProtocol.NETTY:
+		case ProviderProtocol.netty:
 			protocol=new NettyProtocol();
 			break;
-		case ProviderProtocol.JETTY:
+		case ProviderProtocol.jetty:
 			protocol = new JettyProtocol();
 			break;
-		case ProviderProtocol.HTTP:
+		case ProviderProtocol.http:
 			protocol = new HttpProtocol();
 			break;
 		default:

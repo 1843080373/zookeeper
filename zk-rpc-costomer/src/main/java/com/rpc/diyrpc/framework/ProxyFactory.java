@@ -14,19 +14,19 @@ public class ProxyFactory {
 	public static <T> T getProxy(@SuppressWarnings("rawtypes") final Class interfaceClass){
 		return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[] {interfaceClass}, new InvocationHandler() {
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-				Map<String,URL> URL=ZookeeperRegister.random(interfaceClass.getName());
-				String protocol = (String) URL.keySet().toArray()[0];
+				Map<String,Object> map=ZookeeperRegister.random(interfaceClass.getName());
+				String protocol = (String)map.get("protocol");
 				Protocol client =ProtocolFactory.getProtocol(protocol);
 				Invocation invocation = new Invocation();
 				invocation.setInterfaceName(interfaceClass.getName());
 				invocation.setMethodName(method.getName());
 				invocation.setParams(args);
 				invocation.setParamTypes(method.getParameterTypes());
-				System.out.println(JSONObject.toJSON(URL.get(protocol)));
-				System.out.println(JSONObject.toJSON(invocation));
 				try {
-					Object rs = client.post(URL.get(protocol), invocation);
-					System.out.println(rs);
+					System.out.println("map="+JSONObject.toJSONString(map));
+					System.out.println("invocation="+JSONObject.toJSONString(invocation));
+					Object rs = client.post((URL)map.get("url"), invocation);
+					
 					return rs;
 				} catch (Exception e) {
 					e.printStackTrace();
